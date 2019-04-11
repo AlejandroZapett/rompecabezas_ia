@@ -1,12 +1,12 @@
 from nodo import Nodo
 from estructuras import Cola
-from Tiempo import tiempo_ejecuion
+from Tiempo import tiempo_ejecucion
 import sys
 import argparse
 
-#def rompecabezas(argumentos):
+def rompecabezas(argumentos):
 
-	#@tiempo_ejecucion(argumentos)	
+	@tiempo_ejecucion(argumentos)	
 	class Main:
 		
 		def __init__(self, estado_inicial, estado_final):
@@ -18,9 +18,9 @@ import argparse
 			self.enviar_ruta(r)
 
 			#Para ejecuta el programa desde la terminal descomente estas lineas
-			#self.imprimir_ruta(r)
+			self.imprimir_ruta(r)
 			#==Segunda forma de obtener la ruta==
-			#self.imprimir_ruta_dos(r)
+			self.imprimir_ruta_dos(r)
 			#====================================
 
 
@@ -97,29 +97,29 @@ import argparse
 			
 		def conseguir_heuristica_2(self, estado_actual):
 			distancia_manhatan = 0
-			bandera_encontrado = false#bandera que nos indicara si la posicion fue encontrada en la busqueda de izquierda a derecha
 			posiciones_estado_actual = estado_actual.conseguir_cadena();#obtenemos los valores del estado actual
 			posiciones_originales = self.estado_final.conseguir_cadena();#obtenemos los valores del estado final
 			for i,valor in enumerate(posiciones_estado_actual):#recorremos la lista de las posiciones del estado actual
 															   #i: es el inidice, valor: es el valor segun el indice
 				j = i-1#almacenamos el indice a un contador que almacenara
 				distancia = 0
+				bandera_encontrado = false#bandera que nos indicara si la posicion fue encontrada en la busqueda de izquierda a derecha
 				while (j < 10):#buscamos el valor de izquierda a derecha, del 0 al 10
-					if valor = posiciones_originales[j]:#preguntamos si el el valor esta en la posicion correcta
+					if valor == posiciones_originales[j]:#preguntamos si el el valor esta en la posicion correcta
 						distancia_manhatan += distancia   #si lo encuentra, entonces j lo sumamos a la distancia manhatan
 						bandera_encontrado = true # e indicamos que ya se encontro el valor
 						break
-					else#si no se encuentra, entonces aumentamos el contador, indicando que el valor esta desplazado
+					else: #si no se encuentra, entonces aumentamos el contador, indicando que el valor esta desplazado
 						j += 1
 						distancia += 1
-				if !bandera_encontrado :#pregunta si el valor no se ha encontrado de izquierda derecha
+				if bandera_encontrado == false:#pregunta si el valor no se ha encontrado de izquierda derecha
 					j -= 1 #le restamos 1 al indice indicadndo que empieze de 9  a 0
 					distancia = 0
 					while (j >= 0): #buscamos de derecha a izquierda
-						if valor = posiciones_originales[j]:
+						if valor == posiciones_originales[j]:
 							distancia_manhatan += distancia
 							break
-						else
+						else:
 							j -= 1
 							distancia += 1
 			return distancia_manhatan #regresamos la distancia manhatan
@@ -175,11 +175,11 @@ import argparse
 		return argumentos
 
 	if __name__ == '__main__':	
-		args = sys.argv[1].split(" ")
-		main = Main(args[0],args[1])
+		#args = sys.argv[1].split(" ")
+		#main = Main(args[0],args[1])
 		#Entrada 
-		#argumentos = leer_argumentos()
+		argumentos = leer_argumentos()
 		#Instancia
-		#rompecabezas(argumentos)
+		rompecabezas(argumentos)
 		
 
