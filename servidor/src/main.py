@@ -1,7 +1,7 @@
 from nodo import Nodo
 from estructuras import Cola
 import sys
-
+import argparse
 class Main:
 	def __init__(self, estado_inicial, estado_final):
 		self.estado_final = estado_final
@@ -78,6 +78,16 @@ class Main:
 					pos_vacia - 1,
 					pos_vacia + 1,
 					pos_vacia + 3]
+		
+	def conseguir_heuristica_1(self, estado_actual):
+		index=0		
+		estado_actual=nodo_actual.conseguir_cadena()
+		estado_final= self.estado_final.conseguir_cadena()
+		for idx, val in enumerate(estado_actual):#idx es posicion y val el valor de esa posicion
+			if val != estado_final[idx]:
+				index=index+1
+
+		return index
 
 	def nueva_cadena(self,nodo,posicion_cero,nueva_posicion):
 		cadena = nodo.conseguir_cadena()
@@ -114,7 +124,20 @@ class Main:
 			ruta = ruta + " "
 		ruta = ruta.replace(", ", " ")
 		print(ruta)
-
+def leer_argumentos():
+	parser = argparse.ArgumentParser(description='Definir tipo de heuristica')
+	parser.add_argument('-t','--tipo_heuristica', required=True,help= 'Tipo de heuristica: h1 o h2')
+	parser.add_argument('-a','--estados', required=True,help= 'Escribir estado inicial y estado final')
+	
+	args = parser.parse_args()
+	argumentos= args.tipo_heuristica
+	argumentos=[
+		args.estados.split(" ")[0], 
+		args.estados.split(" ")[1],
+		args.tipo_heuristica
+		
+	]
+	return argumentos
 
 if __name__ == '__main__':	
 	args = sys.argv[1].split(" ")
