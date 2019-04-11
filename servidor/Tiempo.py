@@ -12,6 +12,5 @@ def tiempo_ejecucion(message):
 
             print("Tiempo ejecucion: ", tiempo_final-tiempo_inicio)
 
-            
         return wrapped
     return decorador
