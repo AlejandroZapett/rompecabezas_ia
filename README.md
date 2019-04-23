@@ -10,10 +10,17 @@ Para ejercutar el programa se debe contar con:
  - Node 8.12
 
 Para ejecutar el programa:
- (ingresar a main.py y descomentar las líneas marcadas)
- python3 rompecabezas_a_resolver solucion
+
+ (ingresar a servidor/src/main.py y descomentar las líneas marcadas)
+ python3 main.py -t "heuristica" -a "rompecabezas_a_resolver solucion"
+
  P.ejemplo: 
- 	python3 "1230456789 123456780"
+
+ 	python3 main.py -t "h1" -a "123045678 123456780"
+
+ Para obtener ayuda se puede ejecutar:
+ 
+ 	python3 main.py -h
 
 Para ejecutar el programa desde la interfaz gráfica:
 
