@@ -55,6 +55,7 @@ h2 {
 	border: solid 20px yellow;
 	background-color: black;
 	border-radius: 10px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
 	display: flex;
 	flex-flow: row;
@@ -93,4 +94,44 @@ button {
 	color: white;
 	background-color:#006652;
 	font-size: 20px;
+
+	 transition: transform .2s;
 }
+
+button:hover {
+	-ms-transform: scale(1.5); /* IE 9 */
+  	-webkit-transform: scale(1.5); /* Safari 3-8 */
+  	transform: scale(1.5); 
+  	background: #003329;
+}
+
+button:focus {
+	background: #003329;
+}
+
+.button-area {
+	display: flex;
+	flex-direction: row;
+}
+
+#time-area {
+	background-color: #006652;
+	width: 60%;
+	border-radius: 10px;
+	margin: 20px;
+	margin-top: 40px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#time-area p {
+	font-size: 20px;
+	margin-left: 20px;
+	padding-top: px;
+	padding-bottom: 15px;
+	color: white;
+}
+

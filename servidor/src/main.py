@@ -9,23 +9,25 @@ def rompecabezas(argumentos):
 	@tiempo_ejecucion(argumentos)	
 	class Main:
 		
-		def __init__(self, estado_inicial, estado_final):
+		def __init__(self, estado_inicial, estado_final, tipo_heuristica):
 			self.estado_final = estado_final
 			self.estado_inicial = Nodo(estado_inicial)
-			r = self.conseguir_ruta()
+			r = self.conseguir_ruta(tipo_heuristica)
 
 			#Para ejecutar el programa desde la interfaz grafica descomente estas líneas
 			self.enviar_ruta(r)
 
 			#Para ejecuta el programa desde la terminal descomente estas lineas
-			self.imprimir_ruta(r)
-			#==Segunda forma de obtener la ruta==
-			self.imprimir_ruta_dos(r)
+			#self.imprimir_ruta(r)
 			#====================================
 
+		def conseguir_ruta(self, h="none"):
+			if h != "none":
+				return self.conseguir_ruta_heuristica(h)
+			else:
+				return self.conseguir_ruta_amplitud()
 
-
-		def conseguir_ruta(self):
+		def conseguir_ruta_amplitud(self):
 			#Definicion de condiciones iniciales 
 			cola = Cola()
 			estado_actual = self.estado_inicial
@@ -49,12 +51,53 @@ def rompecabezas(argumentos):
 			#====================================
 			return estado_actual
 
+		def conseguir_ruta_heuristica(self, h):
+			#Definicion de condiciones iniciales 
+			lista_espera = []
+			estado_actual = self.estado_inicial
+			visitados = []
+			hijos = self.crear_hijos(estado_actual)
+
+			#Algoritmo de busqueda por Heurística
+			while (self.es_solucion(estado_actual.conseguir_cadena()) == False):
+				#self.imprimir_como_matriz(estado_actual.conseguir_cadena())
+				visitados.append(estado_actual.conseguir_cadena())
+				hijos = self.crear_hijos(estado_actual)
+				for x in hijos: 
+					if x.conseguir_cadena() not in visitados:
+						x.establecer_ruta_al_nodo(
+							estado_actual.ruta_al_nodo, 
+							estado_actual.conseguir_cadena()
+						) #en cada nodo hijo guardo la ruta
+						x.establecer_costo(
+							self.conseguir_heuristica(h, x)
+						)
+						lista_espera.append(x)
+				lista_espera = self.ordenar_lista(lista_espera)
+				estado_actual = lista_espera.pop(0)
+			
+			estado_actual.establecer_ruta_al_nodo(
+				estado_actual.ruta_al_nodo, 
+				estado_actual.conseguir_cadena()
+			)#guardo el ultimo nodo en la ruta
+			return estado_actual
+
+		def conseguir_heuristica(self, h, estado):
+			if h == "h1":
+				return self.conseguir_heuristica_1(estado)
+			elif h == "h2":
+				return self.conseguir_heuristica_2(estado)
+
+		def ordenar_lista(self, lista):
+			lista_aux = []
+			lista_aux = sorted(lista, key = lambda x: x.costo)#key = lambda x: x.costo_acumulado
+			return list(lista_aux)
+
 		def es_solucion(self, estado):
 			if (estado == self.estado_final):
 				return True
 			else:
 				return False
-
 
 		def crear_hijos(self, nodo):
 			cadena = nodo.conseguir_cadena()
@@ -67,7 +110,6 @@ def rompecabezas(argumentos):
 						)
 					)
 				)
-
 
 		def crear_posiciones(self,pos_vacia):
 			mod = (pos_vacia + 1) % 3 #me dice  si es una posicion en el extremo derecho o izquierdo
@@ -87,32 +129,31 @@ def rompecabezas(argumentos):
 
 		def conseguir_heuristica_1(self, estado_actual):
 			index=0		
-			estado_actual=nodo_actual.conseguir_cadena()
-			estado_final= self.estado_final.conseguir_cadena()
+			estado_actual=estado_actual.conseguir_cadena()
+			estado_final= self.estado_final
 			for idx, val in enumerate(estado_actual):#idx es posicion y val el valor de esa posicion
 				if val != estado_final[idx]:
 					index=index+1
-
 			return index
 			
 		def conseguir_heuristica_2(self, estado_actual):
 			distancia_manhatan = 0
 			posiciones_estado_actual = estado_actual.conseguir_cadena();#obtenemos los valores del estado actual
-			posiciones_originales = self.estado_final.conseguir_cadena();#obtenemos los valores del estado final
+			posiciones_originales = self.estado_final;#obtenemos los valores del estado final
 			for i,valor in enumerate(posiciones_estado_actual):#recorremos la lista de las posiciones del estado actual
 															   #i: es el inidice, valor: es el valor segun el indice
 				j = i-1#almacenamos el indice a un contador que almacenara
 				distancia = 0
-				bandera_encontrado = false#bandera que nos indicara si la posicion fue encontrada en la busqueda de izquierda a derecha
+				bandera_encontrado = False#bandera que nos indicara si la posicion fue encontrada en la busqueda de izquierda a derecha
 				while (j < 10):#buscamos el valor de izquierda a derecha, del 0 al 10
 					if valor == posiciones_originales[j]:#preguntamos si el el valor esta en la posicion correcta
 						distancia_manhatan += distancia   #si lo encuentra, entonces j lo sumamos a la distancia manhatan
-						bandera_encontrado = true # e indicamos que ya se encontro el valor
+						bandera_encontrado = True # e indicamos que ya se encontro el valor
 						break
 					else: #si no se encuentra, entonces aumentamos el contador, indicando que el valor esta desplazado
 						j += 1
 						distancia += 1
-				if bandera_encontrado == false:#pregunta si el valor no se ha encontrado de izquierda derecha
+				if bandera_encontrado == False:#pregunta si el valor no se ha encontrado de izquierda derecha
 					j -= 1 #le restamos 1 al indice indicadndo que empieze de 9  a 0
 					distancia = 0
 					while (j >= 0): #buscamos de derecha a izquierda
@@ -133,14 +174,8 @@ def rompecabezas(argumentos):
 			else:
 				return -1 #los fuera de rango retornan esta bandera
 
-		def imprimir_ruta(self,nodo_final): #imprime ruta de final a inicio, corregir esto
-			nodo_actual = nodo_final
-			while(nodo_actual != None):
-				self.imprimir_como_matriz(nodo_actual.conseguir_cadena())
-				nodo_actual = nodo_actual.conseguir_padre()
-
 		#==Segunda forma de obtener la ruta==
-		def imprimir_ruta_dos(self, nodo_final):
+		def imprimir_ruta(self, nodo_final):
 			ruta = nodo_final.conseguir_ruta_al_nodo()
 			print("======== Ruta al nodo ========\n")
 			for x in ruta:
@@ -159,27 +194,30 @@ def rompecabezas(argumentos):
 				ruta = ruta + " "
 			ruta = ruta.replace(", ", " ")
 			print(ruta)
-	def leer_argumentos():
-		parser = argparse.ArgumentParser(description='Definir tipo de heuristica')
-		parser.add_argument('-t','--tipo_heuristica', required=True,help= 'Tipo de heuristica: h1 o h2')
-		parser.add_argument('-a','--estados', required=True,help= 'Escribir estado inicial y estado final')
 
-		args = parser.parse_args()
-		argumentos= args.tipo_heuristica
-		argumentos=[
-			args.estados.split(" ")[0], 
-			args.estados.split(" ")[1],
-			args.tipo_heuristica
+	Main()
 
-		]
-		return argumentos
+def leer_argumentos():
+	parser = argparse.ArgumentParser(description='Definir tipo de heuristica')
+	parser.add_argument('-t','--tipo_heuristica', required=True,help= 'Tipo de heuristica: h1, h2 o none')
+	parser.add_argument('-a','--estados', required=True,help= 'Escribir estado inicial y estado final')
 
-	if __name__ == '__main__':	
-		#args = sys.argv[1].split(" ")
-		#main = Main(args[0],args[1])
-		#Entrada 
-		argumentos = leer_argumentos()
-		#Instancia
-		rompecabezas(argumentos)
+	args = parser.parse_args()
+	argumentos= args.tipo_heuristica
+	argumentos=[
+		args.estados.split(" ")[0], 
+		args.estados.split(" ")[1],
+		args.tipo_heuristica
+
+	]
+	return argumentos
+
+if __name__ == '__main__':	
+	#args = sys.argv[1].split(" ")
+	#main = Main(args[0],args[1])
+	#Entrada 
+	argumentos = leer_argumentos()
+	#Instancia
+	rompecabezas(argumentos)
 		
 

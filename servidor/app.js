@@ -18,7 +18,7 @@ io.on('connection', function(socket){
 	console.log("conexión establecida");
 
 	socket.on('request', function(data){
-		//console.log(data);
+		console.log(data);
 		pythonScript(data);
 	});
 
@@ -26,12 +26,13 @@ io.on('connection', function(socket){
 
 //Comunicacion con python
 function pythonScript(arg){
+
 	var options = {
 		mode: 'text',
 		encoding: 'utf8',
 		pythonOptions: ['-u'],
 		scriptPath: './servidor/src', //la ruta cambia, ésta es para ejecutarla de la carpeta raiz del proyecto
-		args: [arg], //"123456078 123456780"
+		args: ["-t",arg.split(",")[0], "-a",arg.split(",")[1]], //"123456078 123456780"
 		pythonPath: 'python' //colocar la propia ruta de python
 	};
 
