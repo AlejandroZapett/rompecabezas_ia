@@ -12,6 +12,7 @@ def rompecabezas(argumentos):
 		def __init__(self, estado_inicial, estado_final, tipo_heuristica):
 			self.estado_final = estado_final
 			self.estado_inicial = Nodo(estado_inicial)
+			print("La h2 es: ",self.conseguir_heuristica_2(self.estado_inicial))
 			r = self.conseguir_ruta(tipo_heuristica)
 
 			#Para ejecutar el programa desde la interfaz grafica descomente estas líneas
@@ -141,29 +142,28 @@ def rompecabezas(argumentos):
 			posiciones_estado_actual = estado_actual.conseguir_cadena();#obtenemos los valores del estado actual
 			posiciones_originales = self.estado_final;#obtenemos los valores del estado final
 			for i,valor in enumerate(posiciones_estado_actual):#recorremos la lista de las posiciones del estado actual
-															   #i: es el inidice, valor: es el valor segun el indice
-				j = i-1#almacenamos el indice a un contador que almacenara
-				distancia = 0
-				bandera_encontrado = False#bandera que nos indicara si la posicion fue encontrada en la busqueda de izquierda a derecha
-				while (j < 10):#buscamos el valor de izquierda a derecha, del 0 al 10
-					if valor == posiciones_originales[j]:#preguntamos si el el valor esta en la posicion correcta
-						distancia_manhatan += distancia   #si lo encuentra, entonces j lo sumamos a la distancia manhatan
-						bandera_encontrado = True # e indicamos que ya se encontro el valor
-						break
-					else: #si no se encuentra, entonces aumentamos el contador, indicando que el valor esta desplazado
-						j += 1
-						distancia += 1
-				if bandera_encontrado == False:#pregunta si el valor no se ha encontrado de izquierda derecha
-					j -= 1 #le restamos 1 al indice indicadndo que empieze de 9  a 0
-					distancia = 0
-					while (j >= 0): #buscamos de derecha a izquierda
-						if valor == posiciones_originales[j]:
-							distancia_manhatan += distancia
-							break
-						else:
-							j -= 1
-							distancia += 1
+				if valor != "0":
+					c_x_actual = self.posiciones_x(i)
+					c_y_actual = self.posiciones_y(i)
+					for j,valor_2 in enumerate(posiciones_originales):
+						if (valor_2 == valor):
+							c_x_final = self.posiciones_x(j)
+							c_y_final = self.posiciones_y(j)
+					distancia_manhatan = distancia_manhatan + abs(c_x_final-c_x_actual) + abs(c_y_final-c_y_actual)
 			return distancia_manhatan #regresamos la distancia manhatan
+
+		def posiciones_x(self, posicion_lineal):#modulo
+			mod = (posicion_lineal + 1)%3
+			if mod == 0:
+				return 3
+			else: 
+				return mod
+
+		def posiciones_y(self, posicion_lineal):
+			idy = 3
+			idy = idy - 1 if posicion_lineal + 1 < 7 else idy
+			idy = idy - 1 if posicion_lineal + 1 < 4 else idy
+			return idy
 
 		def nueva_cadena(self,nodo,posicion_cero,nueva_posicion):
 			cadena = nodo.conseguir_cadena()
